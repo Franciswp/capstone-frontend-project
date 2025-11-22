@@ -8,7 +8,7 @@ import StarRateIcon from '@mui/icons-material/StarRate';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { Link } from 'react-router-dom';
 // Load all images from /src/assets/img using Vite's glob import
-const posters = import.meta.glob('../assets/img/**/*.{png,jpg,jpeg,webp,svg,PNG,JPG,JPEG,WEBP,SVG}', {
+const posters = import.meta.glob('../assets/image/**/*.{png,jpg,jpeg,webp,svg,PNG,JPG,JPEG,WEBP,SVG}', {
     eager: true,
     as: 'url',
 });
