@@ -1,3 +1,4 @@
+// src/routes/router.tsx
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import App from '../App';
@@ -18,7 +19,11 @@ export const router = createBrowserRouter([
             { path: 'login', element: React.createElement(Login, null) },
             { path: 'register', element: React.createElement(Register, null) },
             { path: 'bookings', element: React.createElement(Booking, null) },
-            { path: 'profile', element: React.createElement(Profile, null) },
+            {
+                path: 'profile',
+                element: (React.createElement(ProtectedRoute, null,
+                    React.createElement(Profile, null))),
+            },
             {
                 path: 'screenings/:id',
                 element: (React.createElement(ProtectedRoute, null,

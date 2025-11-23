@@ -1,69 +1,29 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// src/pages/Login.tsx
+import React from 'react';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Alert, Box, Button, CircularProgress, Paper, Stack, TextField, Typography, } from '@mui/material';
-import { useAuthStore } from '../store/auth';
-async function handleLogin(email, password) {
-    const res = await axios.post('http://localhost:5000/users/login', { email, password });
-    const { access_token, refresh_token, user } = res.data ?? {};
-    if (!access_token) {
-        throw new Error('Login response missing access_token');
-    }
-    // Derive user id (prefer API user.id, fallback to JWT "sub")
-    let userId = user?.id;
-    if (!userId) {
-        try {
-            const [, payload] = access_token.split('.');
-            if (payload) {
-                const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-                const json = decodeURIComponent(atob(base64)
-                    .split('')
-                    .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-                    .join(''));
-                const data = JSON.parse(json);
-                userId = data.sub ?? data.user_id ?? undefined;
-            }
-        }
-        catch {
-            /* ignore */
-        }
-    }
-    if (!userId)
-        throw new Error('Could not determine user id from response');
-    // Persist via auth store
-    useAuthStore.getState().login(access_token, userId);
-    // Keep refresh token for silent renewals
-    if (refresh_token) {
-        localStorage.setItem('refresh_token', refresh_token);
-    }
-    // Ensure subsequent requests carry the token immediately
-    axios.defaults.headers.common.Authorization = `Bearer ${access_token}`;
-    return { userId };
-}
+import { Alert, Box, Button, CircularProgress, Paper, Stack, TextField, Typography, Link, } from '@mui/material';
+import { useAuth } from '../hooks/useAuth';
 const Login = () => {
     const navigate = useNavigate();
-    const [serverError, setServerError] = useState(null);
+    const { login, loading, error } = useAuth();
     const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm({
         defaultValues: { email: '', password: '' },
     });
     const onSubmit = async (data) => {
-        setServerError(null);
         try {
-            await handleLogin(data.email, data.password);
+            await login(data.email, data.password);
             navigate('/profile');
         }
-        catch (err) {
-            const message = err?.response?.data?.error ??
-                err?.message ??
-                'Login failed. Please try again.';
-            setServerError(message);
+        catch {
+            // error already in store
         }
     };
+    const isBusy = loading || isSubmitting;
     return (React.createElement(Box, { display: "flex", justifyContent: "center", mt: 6 },
         React.createElement(Paper, { sx: { p: 4, width: 420 } },
             React.createElement(Typography, { variant: "h5", mb: 2 }, "Login"),
-            serverError ? (React.createElement(Alert, { severity: "error", sx: { mb: 2 } }, serverError)) : null,
+            error && (React.createElement(Alert, { severity: "error", sx: { mb: 2 } }, error)),
             React.createElement("form", { onSubmit: handleSubmit(onSubmit), noValidate: true },
                 React.createElement(Stack, { spacing: 2 },
                     React.createElement(TextField, { label: "Email", type: "email", autoComplete: "email", fullWidth: true, error: !!errors.email, helperText: errors.email?.message, ...register('email', {
@@ -80,19 +40,19 @@ const Login = () => {
                                 message: 'Password must be at least 6 characters',
                             },
                         }) }),
-                    React.createElement(Button, { type: "submit", variant: "contained", disabled: isSubmitting, fullWidth: true, size: "large" }, isSubmitting ? (React.createElement(React.Fragment, null,
+                    React.createElement(Button, { type: "submit", variant: "contained", disabled: isBusy, fullWidth: true, size: "large" }, isBusy ? (React.createElement(React.Fragment, null,
                         React.createElement(CircularProgress, { color: "inherit", size: 20, sx: { mr: 1 } }),
                         "Logging in...")) : ('Login'))),
                 React.createElement(Stack, { sx: { mt: 2 } },
                     React.createElement(Typography, { variant: "body2" },
                         "Don't have an account?",
                         ' ',
-                        React.createElement("a", { href: "/bookings" },
+                        React.createElement(Link, { component: RouterLink, to: "/bookings" },
                             React.createElement("strong", null, "Booking"))),
                     React.createElement(Typography, { variant: "body2" },
                         "Membership's account?",
                         ' ',
-                        React.createElement("a", { href: "/register" },
+                        React.createElement(Link, { component: RouterLink, to: "/register" },
                             React.createElement("strong", null, "Register"))))))));
 };
 export default Login;

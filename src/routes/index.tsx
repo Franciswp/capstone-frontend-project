@@ -1,14 +1,15 @@
-import React from 'react'
-import { createBrowserRouter } from 'react-router-dom'
-import App from '../App'
-import Home from '../pages/Home'
-import Login from '../pages/Login'
-import Register from '../pages/Register'
-import Booking from '../pages/Bookings'
-import Screening from '../pages/Screening'
-import Confirm from '../pages/Confirm'
-import Profile from '../pages/Profile'
-import ProtectedRoute from './ProtectedRoute'
+// src/routes/router.tsx
+import React from 'react';
+import { createBrowserRouter } from 'react-router-dom';
+import App from '../App';
+import Home from '../pages/Home';
+import Login from '../pages/Login';
+import Register from '../pages/Register';
+import Booking from '../pages/Bookings';
+import Screening from '../pages/Screening';
+import Confirm from '../pages/Confirm';
+import Profile from '../pages/Profile';
+import ProtectedRoute from './ProtectedRoute';
 
 export const router = createBrowserRouter([
   {
@@ -16,26 +17,35 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <Home /> },
+
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
       { path: 'bookings', element: <Booking /> },
-      { path: 'profile', element:  <Profile /> },
+
+      {
+        path: 'profile',
+        element: (
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+        ),
+      },
       {
         path: 'screenings/:id',
         element: (
-          <ProtectedRoute>
-            <Screening />
-          </ProtectedRoute>
+            <ProtectedRoute>
+              <Screening />
+            </ProtectedRoute>
         ),
       },
       {
         path: 'confirm',
         element: (
-          <ProtectedRoute>
-            <Confirm />
-          </ProtectedRoute>
+            <ProtectedRoute>
+              <Confirm />
+            </ProtectedRoute>
         ),
       },
     ],
   },
-])
+]);

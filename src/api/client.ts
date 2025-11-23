@@ -15,7 +15,7 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Optional: handle 401 to refresh or redirect
+// Optional: handle 401 to refresh or redirect all
 let isRefreshing = false;
 let pending: Array<(t: string) => void> = [];
 
