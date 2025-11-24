@@ -316,7 +316,7 @@ export default function Home() {
                   </CardContent>
 
                   <CardActions sx={{ px: 2, pb: 2 }}>
-                    <Link to={to} style={{ textDecoration: 'none', width: '100%' }}>
+                    <Link to={'/login'} style={{ textDecoration: 'none', width: '100%' }}>
                       <Button
                         fullWidth
                         variant="contained"

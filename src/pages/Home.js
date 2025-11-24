@@ -170,7 +170,7 @@ export default function Home() {
                                     overflow: 'hidden',
                                 } }, String(movie.synopsis))))),
                     React.createElement(CardActions, { sx: { px: 2, pb: 2 } },
-                        React.createElement(Link, { to: to, style: { textDecoration: 'none', width: '100%' } },
+                        React.createElement(Link, { to: '/login', style: { textDecoration: 'none', width: '100%' } },
                             React.createElement(Button, { fullWidth: true, variant: "contained", disableElevation: true, sx: { textTransform: 'none', fontWeight: 700 } }, "Select Seats"))))));
         }))) : (React.createElement(Box, { sx: { py: 8, textAlign: 'center,', color: 'text.secondary' } },
             React.createElement(Typography, { variant: "h6", gutterBottom: true }, "No movies available"),

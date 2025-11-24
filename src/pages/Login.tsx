@@ -35,7 +35,7 @@ const Login: React.FC = () => {
   const onSubmit = async (data: LoginFormInputs) => {
     try {
       await login(data.email, data.password);
-      navigate('/login');
+      navigate('/profile', { replace: true });
     } catch {
       // error already in store
     }
