@@ -12,12 +12,10 @@ const posters = import.meta.glob('../assets/img/**/*.{png,jpg,jpeg,webp,svg,PNG,
     eager: true,
     as: 'url',
 });
+// removed API_BASE_URL – proxy will handle the base URL
 function getPosterUrl(movie) {
     const src = String(movie.posterUrl ?? '').trim();
     // Absolute or data/blob URLs
-    if (/^(https?:|data:|blob:)/i.test(src))
-        return src;
-    // Try exact relative/path match (case-insensitive)
     const exact = Object.entries(posters).find(([p]) => p.toLowerCase().endsWith(src.toLowerCase()));
     if (exact)
         return exact[1];
@@ -52,7 +50,8 @@ export default function Home() {
             try {
                 setLoading(true);
                 setError(null);
-                const res = await axios.get('http://localhost:5000/movies/all', { signal: controller.signal });
+                // use relative URL – Vite dev server proxy will forward this
+                const res = await axios.get('/movies/all', { signal: controller.signal });
                 const data = Array.isArray(res.data) ? res.data : res.data?.movies ?? [];
                 if (isActive) {
                     setMovies(data);
